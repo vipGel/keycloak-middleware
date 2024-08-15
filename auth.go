@@ -32,6 +32,8 @@ func ValidateToken(
 	return token, claims, nil
 }
 
+// GetToken
+// Need to enable "Client authentication" and "Service accounts roles" marks in client settings to make it work
 func GetToken(
 	ctx context.Context,
 	config *Config,
