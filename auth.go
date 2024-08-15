@@ -13,23 +13,23 @@ func ValidateToken(
 	ctx context.Context,
 	config *Config,
 	tokenString string,
-) (*jwt.Token, jwt.MapClaims, error) {
+) (*jwt.Token, error) {
 	certs, err := config.GocloakClient.GetCerts(ctx, config.Realm)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	token, err := jwt.Parse(tokenString, keyFunc(*certs.Keys))
-	if err != nil {
-		return nil, nil, err
+	if err != nil || !token.Valid {
+		return nil, err
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok || !token.Valid {
-		return nil, nil, fmt.Errorf("invalid token")
-	}
+	//claims, ok := token.Claims.(jwt.MapClaims)
+	//if !ok || !token.Valid {
+	//	return nil, nil, fmt.Errorf("invalid token")
+	//}
 
-	return token, claims, nil
+	return token, nil
 }
 
 // GetToken

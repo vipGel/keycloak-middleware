@@ -1,6 +1,7 @@
 package keycloak_middleware
 
 import (
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strings"
@@ -34,8 +35,13 @@ func EchoTokenAuthMiddleware(config *Config) echo.MiddlewareFunc {
 				return c.JSON(http.StatusUnauthorized, "Invalid Authorization Token")
 			}
 
-			token, claims, err := ValidateToken(c.Request().Context(), config, tokenString)
+			token, err := ValidateToken(c.Request().Context(), config, tokenString)
 			if err != nil || !token.Valid {
+				return c.JSON(http.StatusUnauthorized, "Invalid token")
+			}
+
+			claims, ok := token.Claims.(jwt.MapClaims)
+			if !ok {
 				return c.JSON(http.StatusUnauthorized, "Invalid token")
 			}
 
